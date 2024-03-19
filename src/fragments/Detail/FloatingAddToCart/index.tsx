@@ -25,7 +25,6 @@ export default function FloatingAddToCart({data}: FloatingAddToCartProps) {
   const resetCount = useCounterStore.use.resetCount();
 
   const handleAddToCart = useCallback(() => {
-    console.log(count);
     const payload = {
       ...data,
       count: count,
