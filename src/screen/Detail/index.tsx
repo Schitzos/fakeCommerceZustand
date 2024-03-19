@@ -1,9 +1,7 @@
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import {View} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {DrawerActions, useFocusEffect} from '@react-navigation/native';
 import {RootStackParamList} from '@/navigation/types';
-import {useCart} from '@/hooks/useCart';
 import {HeaderNavigation} from '@/components/HeaderNavigation';
 import Cart from '@/components/Cart';
 import {ProductDetail} from '@/fragments/Detail/ProductDetail';
@@ -15,34 +13,8 @@ type DetailScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Detail'>;
 };
 
-export default function Detail({navigation, route}: DetailScreenProps) {
+export default function Detail({route}: DetailScreenProps) {
   const {data} = route.params;
-  const {addToCart} = useCart();
-  const [productOrderCount, setProductOrderCount] = useState(1);
-
-  const handleAddToCart = () => {
-    const payload = {
-      ...data,
-      count: productOrderCount,
-      total: data?.price * productOrderCount,
-      selected: true,
-    };
-    addToCart(payload);
-    navigation.dispatch(DrawerActions.openDrawer());
-    setProductOrderCount(1);
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        setProductOrderCount(1);
-      };
-    }, []),
-  );
-
-  const updateProduct = useCallback((val: number) => {
-    setProductOrderCount(val);
-  }, []);
 
   return (
     <View style={styles.base}>
@@ -51,17 +23,8 @@ export default function Detail({navigation, route}: DetailScreenProps) {
         title="Product Detail"
         rightSection={Cart}
       />
-      <ProductDetail
-        data={data}
-        productOrderCount={productOrderCount}
-        updateProduct={updateProduct}
-      />
-      <FloatingAddToCart
-        handleAddToCart={handleAddToCart}
-        id={data.id}
-        price={data.price}
-        productOrderCount={productOrderCount}
-      />
+      <ProductDetail data={data} />
+      <FloatingAddToCart data={data} />
     </View>
   );
 }

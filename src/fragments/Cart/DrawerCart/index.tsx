@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, ScrollView, View} from 'react-native';
 import {DrawerNavigationHelpers} from '@react-navigation/drawer/lib/typescript/src/types';
-import {useCart} from '@/hooks/useCart';
+import {useCartStore} from '@/hooks/useCart';
 import TextView from '@/components/TextView';
 import CartItemView from '../CartItemView';
 import ButtonView from '@/components/Button';
@@ -12,14 +12,17 @@ type DrawerNavigationProps = {
 };
 
 export default function DrawerCart({navigation}: DrawerNavigationProps) {
-  const {cart, updateCart, selectCart, clearCart} = useCart();
+  const cart = useCartStore.use.cart();
+  const updateCart = useCartStore.use.updateCart();
+  const selectCartItem = useCartStore.use.selectCartItem();
+  const clearCart = useCartStore.use.clearCart();
 
   const handleCounter = (val: number, id: number) => {
     updateCart(val, id);
   };
 
   const handleSelectedCart = (id: number, val: boolean) => {
-    selectCart(val, id);
+    selectCartItem(val, id);
   };
 
   return (
@@ -33,7 +36,7 @@ export default function DrawerCart({navigation}: DrawerNavigationProps) {
           <View style={styles.cartContainer}>
             {cart.length === 0 && <TextView>No item in Cart</TextView>}
             {cart.length !== 0 &&
-              cart.map(val => {
+              cart?.map(val => {
                 return (
                   <CartItemView
                     data={val}

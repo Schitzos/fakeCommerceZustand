@@ -1,51 +1,33 @@
-import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {memo} from 'react';
+import {TouchableOpacity, View} from 'react-native';
 import TextView from '../TextView';
-import theme from '../../theme';
+import {styles} from './styles';
 
-export default function Counter({
-  count,
-  setCount,
-}: {
+type CounterProps = {
   count: number;
-  setCount: (data: any) => void;
-}) {
-  const handleIncreament = () => {
-    setCount(count + 1); // Update the count in the parent component directly
-  };
+  setCount: (val: number) => void;
+};
 
-  const handleDecreament = () => {
-    setCount(count - 1); // Update the count in the parent component directly
-  };
-
+export function Counter({count, setCount}: CounterProps) {
   return (
     <View style={styles.counter}>
-      <TouchableOpacity onPress={handleDecreament} style={styles.btnCounter}>
+      <TouchableOpacity
+        onPress={() => {
+          count !== 1 && setCount(count - 1);
+        }}
+        style={styles.btnCounter}>
         <TextView>-</TextView>
       </TouchableOpacity>
       <View>
         <TextView>{count}</TextView>
       </View>
-      <TouchableOpacity onPress={handleIncreament} style={styles.btnCounter}>
+      <TouchableOpacity
+        onPress={() => setCount(count + 1)}
+        style={styles.btnCounter}>
         <TextView>+</TextView>
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  counter: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-  },
-  btnCounter: {
-    borderWidth: 1,
-    borderColor: theme.colors.neutral200,
-    height: 24,
-    width: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 4,
-  },
-});
+export default memo(Counter);

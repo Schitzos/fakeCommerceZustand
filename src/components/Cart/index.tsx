@@ -2,14 +2,16 @@ import React from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import IconCart from '@assets/icon/icon-shopping-cart.svg';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
-import {useCart} from '@/hooks/useCart';
 import theme from '@/theme';
 import TextView from '../TextView';
 import {styles} from './styles';
+import {useCartStore} from '@/hooks/useCart';
 
 export default function Cart() {
   const navigation = useNavigation();
-  const {cart} = useCart();
+  const cart = useCartStore.use.cart();
+  console.log('render cart');
+
   return (
     <TouchableOpacity
       style={styles.baseLayout}

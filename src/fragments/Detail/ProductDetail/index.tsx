@@ -4,18 +4,17 @@ import React, {memo} from 'react';
 import {ScrollView, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {styles} from './styles';
+import {useCounterStore} from '@/hooks/useCounter';
 
 type ProductDetailProps = {
   data: any;
-  updateProduct: (val: number) => void;
-  productOrderCount: number;
 };
 
-export function ProductDetail({
-  data,
-  updateProduct,
-  productOrderCount,
-}: ProductDetailProps) {
+export function ProductDetail({data}: ProductDetailProps) {
+  const count = useCounterStore.use.count();
+  const setCount = useCounterStore.use.setCount();
+
+  console.log('render product detail');
   return (
     <>
       <View style={styles.topInfo}>
@@ -37,9 +36,9 @@ export function ProductDetail({
           <View style={styles.productInfo}>
             <View style={styles.productCount}>
               <TextView fz={20} fw="600" align="left">
-                ${data?.price}
+                ${data?.price.toFixed(2)}
               </TextView>
-              <Counter count={productOrderCount} setCount={updateProduct} />
+              <Counter count={count} setCount={e => setCount(e)} />
             </View>
             <TextView fz={14} align="justify">
               {data?.description}

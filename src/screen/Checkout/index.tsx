@@ -2,7 +2,7 @@ import ButtonView from '@/components/Button';
 import {HeaderNavigation} from '@/components/HeaderNavigation';
 import TextView from '@/components/TextView';
 import CheckoutItemView from '@/fragments/Checkout/CheckoutItem';
-import {useCart} from '@/hooks/useCart';
+import {useCartStore} from '@/hooks/useCart';
 import {RootStackParamList} from '@/navigation/types';
 import {StackNavigationProp} from '@react-navigation/stack';
 import React from 'react';
@@ -15,7 +15,7 @@ type CheckoutScreenProps = {
 };
 
 export default function Checkout({navigation}: CheckoutScreenProps) {
-  const {cart} = useCart();
+  const cart = useCartStore.use.cart();
   const selectedCart = cart.filter(val => val.selected);
 
   return (

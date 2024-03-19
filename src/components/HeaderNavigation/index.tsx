@@ -14,6 +14,7 @@ export function HeaderNavigation({
   rightSection?: () => React.ReactNode;
 }) {
   const navigation = useNavigation();
+  console.log('render header');
   return (
     <View style={styles.baseLayout}>
       <SafeAreaView />

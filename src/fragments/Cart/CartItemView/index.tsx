@@ -22,7 +22,6 @@ export default function CartItemView({
     setToggleCheckBox(val);
     handleSelectedCart(data.id, val);
   };
-
   return (
     <View key={data.id} style={styles.cartItem}>
       <View style={styles.cartItemTitle}>

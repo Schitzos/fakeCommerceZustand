@@ -1,100 +1,89 @@
-import {useContext, Dispatch, SetStateAction} from 'react';
+import {create} from 'zustand';
+import {createJSONStorage, persist} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import dayjs from 'dayjs';
 import {ProductItemProps} from '@/types/Product';
-import {CartContext} from '@/context/CartContext';
+import dayjs from 'dayjs';
+import {createSelectors} from '@/utils/zustand';
 
-interface UseCartResult {
+interface UseCartProps {
   cart: ProductItemProps[];
   addToCart: (newItem: ProductItemProps) => void;
   updateCart: (val: number, id: number) => void;
-  selectCart: (val: boolean, id: number) => void;
-  setCart: Dispatch<SetStateAction<ProductItemProps[]>>;
+  selectCartItem: (val: boolean, id: number) => void;
   clearCart: () => void;
 }
 
-export function useCart(): UseCartResult {
-  const useCartContext = () => {
-    const contextValue = useContext(CartContext);
-    if (contextValue === null) {
-      return {
-        cart: [],
-        setCart: () => {},
-      };
-    }
+const useCartBase = create(
+  persist<UseCartProps>(
+    set => ({
+      cart: [],
+      addToCart: (newItem: ProductItemProps) =>
+        set(prevState => {
+          const updatedCart = [...prevState.cart];
+          const existingProductIndex = updatedCart.findIndex(
+            item => item.id === newItem.id,
+          );
 
-    return contextValue;
-  };
-  const {cart, setCart} = useCartContext();
+          if (existingProductIndex !== -1) {
+            const existingProduct = updatedCart[existingProductIndex];
+            const count = existingProduct.count ?? 0;
+            const total = existingProduct.total ?? 0;
 
-  const clearCart = () => {
-    AsyncStorage.clear();
-    setCart([]);
-  };
+            updatedCart[existingProductIndex] = {
+              ...existingProduct,
+              count: count + (newItem.count ?? 0),
+              total: total + (newItem.total ?? 0),
+              updatedAt: dayjs(),
+            };
+          } else {
+            newItem.updatedAt = dayjs();
+            updatedCart.push(newItem);
+          }
+          const sortedCartByDate = updatedCart.sort(
+            (a: ProductItemProps, b: ProductItemProps) =>
+              dayjs(b.updatedAt).toDate().getTime() -
+              dayjs(a.updatedAt).toDate().getTime(),
+          );
+          return {cart: sortedCartByDate};
+        }),
+      updateCart: (val: number, id: number) =>
+        set(prevState => {
+          const existingProductIndex = prevState.cart.findIndex(
+            (item: ProductItemProps) => item.id === id,
+          );
+          const updatedCart = [...prevState.cart];
 
-  const addToCart = (newItem: ProductItemProps) => {
-    const updatedCart = [...cart];
-    const existingProductIndex = updatedCart.findIndex(
-      item => item.id === newItem.id,
-    );
+          if (existingProductIndex !== -1) {
+            updatedCart[existingProductIndex] = {
+              ...updatedCart[existingProductIndex],
+              count: val,
+              total: updatedCart[existingProductIndex].price * val,
+            };
+          }
+          return {cart: updatedCart};
+        }),
+      selectCartItem: (val: boolean, id: number) =>
+        set(prevState => {
+          const existingProductIndex = prevState.cart.findIndex(
+            (item: ProductItemProps) => item.id === id,
+          );
+          const updatedCart = [...prevState.cart];
 
-    if (existingProductIndex !== -1) {
-      updatedCart[existingProductIndex] = {
-        ...updatedCart[existingProductIndex],
-        count: updatedCart[existingProductIndex].count + newItem.count,
-        total: updatedCart[existingProductIndex].total + newItem.total,
-        updatedAt: dayjs(),
-      };
-    } else {
-      newItem.updatedAt = dayjs();
-      updatedCart.push(newItem);
-    }
-    const sortedCartByDate = updatedCart.sort(
-      (a: ProductItemProps, b: ProductItemProps) =>
-        dayjs(b.updatedAt).toDate().getTime() -
-        dayjs(a.updatedAt).toDate().getTime(),
-    );
+          if (existingProductIndex !== -1) {
+            updatedCart[existingProductIndex] = {
+              ...updatedCart[existingProductIndex],
+              selected: val,
+            };
+          }
+          return {cart: updatedCart};
+        }),
+      clearCart: () => set(() => ({cart: []})),
+    }),
+    {
+      name: 'cart-storage',
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+);
 
-    setCart(sortedCartByDate);
-  };
-
-  const updateCart = (val: number, id: number) => {
-    const existingProductIndex = cart.findIndex(
-      (item: ProductItemProps) => item.id === id,
-    );
-    const updatedCart = [...cart];
-
-    if (existingProductIndex !== -1) {
-      updatedCart[existingProductIndex] = {
-        ...updatedCart[existingProductIndex],
-        count: val,
-        total: updatedCart[existingProductIndex].price * val,
-      };
-    }
-    setCart(updatedCart);
-  };
-
-  const selectCart = (val: boolean, id: number) => {
-    const existingProductIndex = cart.findIndex(
-      (item: ProductItemProps) => item.id === id,
-    );
-    const updatedCart = [...cart];
-
-    if (existingProductIndex !== -1) {
-      updatedCart[existingProductIndex] = {
-        ...updatedCart[existingProductIndex],
-        selected: val,
-      };
-    }
-    setCart(updatedCart);
-  };
-
-  return {
-    cart,
-    addToCart,
-    updateCart,
-    selectCart,
-    setCart,
-    clearCart,
-  };
-}
+export const useCartStore = createSelectors(useCartBase);

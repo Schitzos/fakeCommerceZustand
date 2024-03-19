@@ -2,7 +2,7 @@ import TextView from '@/components/TextView';
 import {RootStackParamList} from '@/navigation/types';
 import {ProductItemProps} from '@/types/Product';
 import {StackNavigationProp} from '@react-navigation/stack';
-import React from 'react';
+import React, {memo} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -11,10 +11,7 @@ interface ProductItemFragmentsProps {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 }
 
-export default function ProductItem({
-  data,
-  navigation,
-}: ProductItemFragmentsProps) {
+export function ProductItem({data, navigation}: ProductItemFragmentsProps) {
   const {title, image, price, rating} = data;
 
   return (
@@ -43,6 +40,8 @@ export default function ProductItem({
     </TouchableOpacity>
   );
 }
+
+export default memo(ProductItem);
 
 const styles = StyleSheet.create({
   item: {
