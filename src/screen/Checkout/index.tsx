@@ -2,7 +2,7 @@ import ButtonView from '@/components/Button';
 import {HeaderNavigation} from '@/components/HeaderNavigation';
 import TextView from '@/components/TextView';
 import CheckoutItemView from '@/fragments/Checkout/CheckoutItem';
-import {useCartStore} from '@/hooks/useCart';
+import {useCartStore} from '@/store/useCart';
 import {RootStackParamList} from '@/navigation/types';
 import {StackNavigationProp} from '@react-navigation/stack';
 import React from 'react';

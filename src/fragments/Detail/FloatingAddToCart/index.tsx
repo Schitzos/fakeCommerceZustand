@@ -1,10 +1,10 @@
 import ButtonView from '@/components/Button';
 import TextView from '@/components/TextView';
-import {useCartStore} from '@/hooks/useCart';
+import {useCartStore} from '@/store/useCart';
 import React, {useCallback} from 'react';
 import {View} from 'react-native';
 import {styles} from './styles';
-import {useCounterStore} from '@/hooks/useCounter';
+import {useCounterStore} from '@/store/useCounter';
 import {ProductItemProps} from '@/types/Product';
 import {
   DrawerActions,

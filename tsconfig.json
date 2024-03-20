@@ -12,7 +12,7 @@
       "@utils/*": ["./src/utils/*"],
       "@types/*": ["./src/types/*"],
       "@service/*": ["./src/service/*"],
-      "@hooks/*": ["./src/hooks/*"],
+      "@hooks/*": ["src/store/*"],
     },
     // other options...
   },

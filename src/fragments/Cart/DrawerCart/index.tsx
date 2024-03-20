@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, ScrollView, View} from 'react-native';
 import {DrawerNavigationHelpers} from '@react-navigation/drawer/lib/typescript/src/types';
-import {useCartStore} from '@/hooks/useCart';
+import {useCartStore} from '@/store/useCart';
 import TextView from '@/components/TextView';
 import CartItemView from '../CartItemView';
 import ButtonView from '@/components/Button';

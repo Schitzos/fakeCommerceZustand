@@ -4,7 +4,7 @@ import React, {memo} from 'react';
 import {ScrollView, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {styles} from './styles';
-import {useCounterStore} from '@/hooks/useCounter';
+import {useCounterStore} from '@/store/useCounter';
 
 type ProductDetailProps = {
   data: any;
